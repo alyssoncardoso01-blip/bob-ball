@@ -526,7 +526,7 @@ function makeOgre(bellyHex,pal){pal=pal||{};const g=new T.Group();const rig=new 
   const eyeW=toon(0xffffff),pup=toon(0x111111);const eyes=[];
   [-1,1].forEach(s=>{const e=new T.Mesh(new T.SphereGeometry(.11,14,10),eyeW);e.position.set(s*.19,HY+.06,.44);rig.add(e);eyes.push({x:s*.19,y:HY+.06,z:.44});
     const p=new T.Mesh(new T.SphereGeometry(.055,10,8),pup);p.position.set(s*.18,HY+.05,.54);rig.add(p);
-    const br=new T.Mesh(new T.BoxGeometry(.26,.065,.08),dark);br.position.set(s*.19,HY+.2,.5);br.rotation.z=-s*.42;rig.add(br);
+    const br=new T.Mesh(new T.BoxGeometry(.26,.065,.08),dark);br.position.set(s*.19,HY+.2,.5);br.rotation.z=s*.42;rig.add(br);
     const ear=new T.Mesh(new T.ConeGeometry(.15,.42,10),skin);ear.position.set(s*.56,HY+.06,-.02);ear.rotation.z=-s*(Math.PI/2.3);ear.castShadow=true;rig.add(ear);
     const tusk=new T.Mesh(new T.ConeGeometry(.05,.19,8),eyeW);tusk.position.set(s*.17,HY-.19,.57);tusk.rotation.x=-.15;rig.add(tusk);});
   const nose=new T.Mesh(new T.SphereGeometry(.13,14,10),dark);nose.scale.set(1.35,.9,1);nose.position.set(0,HY-.05,.52);rig.add(nose);
@@ -1907,7 +1907,7 @@ function setupMenu(){
     g.position.set(rand(-70,70),rand(16,26),rand(-80,-35));scene.add(g);clouds.push(g);}
   // Personagens
   const bp=makeBob();bobRef=bp;bp.group.position.set(0,0,1.5);bp.group.scale.setScalar(1.3);scene.add(bp.group);
-  const pr=makePrincess();pr.g.position.set(3.2,0,-.4);pr.g.rotation.y=-.35;pr.g.scale.setScalar(1.1);scene.add(pr.g);
+  const pr=makePrincess();pr.faceMat.map=pr.happy;pr.faceMat.needsUpdate=true;pr.g.position.set(3.2,0,-.4);pr.g.rotation.y=-.35;pr.g.scale.setScalar(1.1);scene.add(pr.g);
   const wz=makeWitch();wz.g.scale.setScalar(.95);scene.add(wz.g);
   const og=makeOgre(0);og.g.position.set(-3.4,0,-.4);og.g.rotation.y=.4;og.g.scale.setScalar(1.05);scene.add(og.g);
   const red=makeOgre(0,{skin:0xd8473f,dark:0x922a24,light:0xf29a8c,belly:0xf5a99a});red.g.position.set(-6.6,0,-4);red.g.rotation.y=.45;red.g.scale.setScalar(1.9);scene.add(red.g);
@@ -1978,7 +1978,7 @@ function witchFace(){const cv=document.createElement('canvas');cv.width=512;cv.h
   const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'rgba(255,255,255,.18)');gr.addColorStop(.5,'rgba(255,255,255,0)');gr.addColorStop(1,'rgba(40,80,10,.22)');g.fillStyle=gr;g.fillRect(0,0,512,256);
   g.fillStyle='rgba(255,130,120,.35)';ell(g,cx-52,146,13,7);ell(g,cx+52,146,13,7);
   [-1,1].forEach(s=>{const x=cx+s*30;g.fillStyle='#fff8e6';ell(g,x,112,15,13);g.fillStyle='#8a5a1a';ell(g,x+s*2,113,8,9);g.fillStyle='#1a0e04';ell(g,x+s*2,113,4,5);g.fillStyle='#fff';ell(g,x,109,2.5,2.5);
-    g.strokeStyle='#5a5a5a';g.lineWidth=8;g.beginPath();g.moveTo(x-s*22,86);g.lineTo(x+s*16,100);g.stroke();
+    g.strokeStyle='#5a5a5a';g.lineWidth=8;g.beginPath();g.moveTo(x-s*22,100);g.lineTo(x+s*16,84);g.stroke();
     g.strokeStyle='rgba(60,90,20,.6)';g.lineWidth=2.5;g.beginPath();g.moveTo(x+s*18,126);g.quadraticCurveTo(x+s*24,132,x+s*20,138);g.stroke();});
   g.strokeStyle='#3b1d2e';g.lineWidth=6;g.beginPath();g.moveTo(cx-26,174);g.quadraticCurveTo(cx,160,cx+26,174);g.stroke();
   g.strokeStyle='rgba(60,90,20,.55)';g.lineWidth=2.5;g.beginPath();g.moveTo(cx-34,166);g.lineTo(cx-28,178);g.moveTo(cx+34,166);g.lineTo(cx+28,178);g.stroke();
@@ -1996,8 +1996,8 @@ function makeWitch(){const g=new T.Group(),rig=new T.Group();g.add(rig);const ma
   const dress=new T.Mesh(new T.LatheGeometry(prof,26),robe);dress.castShadow=true;rig.add(dress);
   const cape=new T.Mesh(new T.ConeGeometry(.7,1.4,20,1,true,Math.PI*.6,Math.PI*.8),M(0x3f1b63,T.DoubleSide));cape.position.set(0,1.05,-.05);rig.add(cape);
   [[.32,1.0,.45,0xc77dff],[-.38,.75,.42,0x8a5a2b],[.1,.62,.58,0x7d3cc0]].forEach(([x,y,z,c])=>{const pt=new T.Mesh(new T.BoxGeometry(.18,.16,.02),M(c));pt.position.set(x,y,z);pt.lookAt(x*3,y,z*3);rig.add(pt);});
-  const belt=new T.Mesh(new T.TorusGeometry(.33,.045,8,24),M(0x2b1d3a));belt.rotation.x=Math.PI/2;belt.position.y=1.38;rig.add(belt);
-  const buck=new T.Mesh(new T.BoxGeometry(.13,.11,.04),gold);buck.position.set(0,1.38,.34);rig.add(buck);
+  const belt=new T.Mesh(new T.TorusGeometry(.43,.045,8,26),M(0x2b1d3a));belt.rotation.x=Math.PI/2;belt.position.y=1.15;rig.add(belt);
+  const buck=new T.Mesh(new T.BoxGeometry(.14,.12,.04),gold);buck.position.set(0,1.15,.45);rig.add(buck);
   [-1,1].forEach(s=>{const l=new T.Mesh(new T.CylinderGeometry(.075,.065,.62,10),stockA);l.position.set(s*.2,.32,.24);l.rotation.x=-.55;rig.add(l);
     const ring=new T.Mesh(new T.TorusGeometry(.075,.025,6,12),stockB);ring.position.set(s*.2,.36,.22);ring.rotation.x=Math.PI/2-.55;rig.add(ring);
     const sh=new T.Mesh(new T.ConeGeometry(.1,.42,10),shoe);sh.rotation.x=Math.PI/2;sh.position.set(s*.2,.08,.5);rig.add(sh);});
