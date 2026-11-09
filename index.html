@@ -988,7 +988,20 @@ function updateLife(dt){if(!phase||(!lifeRocks.length&&!lifeTokens.length))retur
 /* ---------- Dança da vitória: "six seven" ---------- */
 let danceT=-1;
 function angLerpG(a,b,t){let d=((b-a+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI;return a+d*t;}
-function updateDance(dt){if(!bobRef)return;if(danceT<0){danceT=0;setTimeout(()=>say('Six, seven!','Six, seven!','six'),500);}
+// Voz do "six, seven" da versão de 08/11 (a que a criança gostou)
+const VOWELS={u:[380,850],o:[520,1050],a:[950,1550],e:[560,2200],i:[400,2800]};
+function childVoiceOld(sylls){if(!actx||muted||!SET.voice)return;let t=actx.currentTime+.01;const out=actx.createGain();out.gain.value=2.2;
+  const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4200;out.connect(lp);lp.connect(master);
+  for(const [v,fa,fb,d] of sylls){const o=actx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(fa,t);o.frequency.exponentialRampToValueAtTime(fb,t+d*.85);
+    const vib=actx.createOscillator(),vg=actx.createGain();vib.frequency.value=6.5;vg.gain.value=fa*.035;vib.connect(vg);vg.connect(o.frequency);
+    const g=actx.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.5,t+.03);g.gain.setValueAtTime(.5,t+d*.7);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);
+    VOWELS[v].forEach((F,k)=>{const bp=actx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=F*1.55;bp.Q.value=4.5;const fg=actx.createGain();fg.gain.value=k?.55:1;g.connect(bp);bp.connect(fg);fg.connect(out);});
+    const o2=actx.createOscillator(),g2=actx.createGain();o2.type='sine';o2.frequency.setValueAtTime(fa*2,t);o2.frequency.exponentialRampToValueAtTime(fb*2,t+d*.85);g2.gain.setValueAtTime(.0001,t);g2.gain.exponentialRampToValueAtTime(.05,t+.03);g2.gain.exponentialRampToValueAtTime(.0001,t+d);o2.connect(g2);g2.connect(out);o2.start(t);o2.stop(t+d+.05);
+    o.start(t);vib.start(t);o.stop(t+d+.05);vib.stop(t+d+.05);t+=d*.9;}}
+const SIX_OLD=[['i',1250,1320,.16]],SEVEN_OLD=[['e',1150,1200,.12],['e',1020,1040,.16]];
+function sayDance(){bubble.textContent='Six, seven!';bubble.classList.add('show');bubbleT=1.4;if(bobRef)bobRef.happyT=1.2;
+  if(muted||!SET.voice)return;childVoiceOld(SIX_OLD);if(bobVoice)setTimeout(()=>speak('Six, seven!',bobVoice,2,1.2),120);}
+function updateDance(dt){if(!bobRef)return;if(danceT<0){danceT=0;setTimeout(sayDance,500);}
   const prev=danceT;danceT+=dt;const b=bobRef,t=danceT*8.6,sn=Math.sin(t);
   // mãos com a palma para cima, uma sobe enquanto a outra desce (gesto do "six seven")
   b.hands[0].position.set(-.8,1.15+sn*.5,.5);b.hands[1].position.set(.8,1.15-sn*.5,.5);
@@ -997,7 +1010,7 @@ function updateDance(dt){if(!bobRef)return;if(danceT<0){danceT=0;setTimeout(()=>
   if(b.legs[0].visible)b.legs.forEach((l,i)=>l.rotation.x=Math.max(0,Math.sin(t+i*Math.PI))*-.35);
   b.happyT=.3;
   const beat=Math.floor(danceT/.73),pb=Math.floor(prev/.73);
-  if(beat!==pb&&danceT>1.4){const six=beat%2===0;bubble.textContent=six?'Six!':'Seven!';bubble.classList.add('show');bubbleT=.65;childVoice(six?CHILD.six:CHILD.seven);}
+  if(beat!==pb&&danceT>1.4){const six=beat%2===0;bubble.textContent=six?'Six!':'Seven!';bubble.classList.add('show');bubbleT=.65;childVoiceOld(six?SIX_OLD:SEVEN_OLD);}
   if(phase.facing){yaw=angLerpG(yaw,phase.facing(),Math.min(1,dt*2.5));pitch+=(.22-pitch)*Math.min(1,dt*2);}}
 
 /* ---------- Game Over ---------- */
