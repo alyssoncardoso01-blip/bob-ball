@@ -2904,7 +2904,7 @@ if(AUTOPLAY){addEventListener('pointerdown',initAudio,{once:true});addEventListe
 const anchor=new T.Vector3();
 function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;
   if(goScene){updateGameOver(dt);renderer.render(goScene,goCam);requestAnimationFrame(frame);return;}
-  if(!paused){if(mode==='play')elapsed+=dt;phase.update(dt,now/1000);updateParticles(dt);updateLife(dt);if(mode==='won')updateDance(dt);
+  if(!paused){if(mode==='play')elapsed+=dt;phase.update(dt,now/1000);if(window.__bobCam){const c=window.__bobCam;camera.position.set(c.p[0],c.p[1],c.p[2]);camera.lookAt(c.t[0],c.t[1],c.t[2]);}updateParticles(dt);updateLife(dt);if(mode==='won')updateDance(dt);
     if(msgT>0){msgT-=dt;if(msgT<=0)msgEl.classList.remove('show');}
     if(bubbleT>0){bubbleT-=dt;if(bubbleT<=0)bubble.classList.remove('show');else placeBubble(bubble,phase.bubbleAnchor(anchor));}
     if(obubbleT>0){obubbleT-=dt;if(obubbleT<=0)obubble.classList.remove('show');else if(phase.ogreAnchor)placeBubble(obubble,phase.ogreAnchor(anchor));}}
