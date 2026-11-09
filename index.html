@@ -223,7 +223,7 @@ html,body{-webkit-tap-highlight-color:transparent;}
   <div class="pill brand"><div class="logo">Bob Ball</div><div class="stage" id="stagelabel">Fase 1 · Jardim Arco-Íris</div></div>
   <div class="pill" id="mid"></div>
   <div class="right">
-    <div class="pill" id="lives" aria-label="Vidas"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="9" fill="#f7f7fb" stroke="#2b1d5c" stroke-width="1.6"/><ellipse cx="9" cy="12" rx="1.6" ry="2.4" fill="#4a2a12"/><ellipse cx="15" cy="12" rx="1.6" ry="2.4" fill="#4a2a12"/><circle cx="8.5" cy="11" r=".6" fill="#fff"/><circle cx="14.5" cy="11" r=".6" fill="#fff"/><path d="M9.5 16q2.5 2 5 0" stroke="#5a1838" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg><span id="livescount">×4</span></div>
+    <div class="pill" id="lives" aria-label="Vidas"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="9" fill="#b9f5a4" stroke="#2b1d5c" stroke-width="1.6"/><ellipse cx="9" cy="12" rx="1.6" ry="2.4" fill="#1b1440"/><ellipse cx="15" cy="12" rx="1.6" ry="2.4" fill="#1b1440"/><circle cx="8.5" cy="11" r=".6" fill="#fff"/><circle cx="14.5" cy="11" r=".6" fill="#fff"/><path d="M9.5 16q2.5 2 5 0" stroke="#5a1838" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg><span id="livescount">×4</span></div>
     <div class="pill" id="hearts" aria-label="Corações"></div>
     <button class="pill" id="mute" type="button"></button>
     <button class="pill" id="menubtn" type="button" aria-label="Abrir menu (Esc)"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></button>
@@ -444,27 +444,27 @@ const canopyGeo=new T.SphereGeometry(1,16,12);
 
 /* ================= Texturas ================= */
 function bobFace(mode){const cv=document.createElement('canvas');cv.width=1024;cv.height=512;const g=cv.getContext('2d');
-  g.fillStyle='#f7f7fb';g.fillRect(0,0,1024,512);
-  const grd=g.createLinearGradient(0,0,0,512);grd.addColorStop(0,'rgba(255,255,255,.7)');grd.addColorStop(.5,'rgba(255,255,255,0)');grd.addColorStop(1,'rgba(150,160,195,.28)');g.fillStyle=grd;g.fillRect(0,0,1024,512);
-  const cx=256,ey=206;g.lineCap='round';g.lineJoin='round';
-  g.fillStyle='rgba(255,140,160,.25)';ell(g,cx-104,284,26,13);ell(g,cx+104,284,26,13);
-  g.strokeStyle='#2b1a10';g.lineWidth=13;
-  [-1,1].forEach(s=>{g.beginPath();if(mode==='sad'){g.moveTo(cx+s*30,ey-86);g.quadraticCurveTo(cx+s*58,ey-80,cx+s*86,ey-60);}else{g.moveTo(cx+s*28,ey-64);g.quadraticCurveTo(cx+s*58,ey-86,cx+s*88,ey-66);}g.stroke();});
-  if(mode==='open'||mode==='sad'){[-1,1].forEach(s=>{const x=cx+s*58,y=ey;
-      g.fillStyle='#ffffff';ell(g,x,y,37,49);
-      const ig=g.createRadialGradient(x,y+8,4,x,y+8,34);ig.addColorStop(0,'#9a6634');ig.addColorStop(.65,'#5a3214');ig.addColorStop(1,'#2a1508');g.fillStyle=ig;ell(g,x+s*2,y+7,29,39);
-      g.fillStyle='#120804';ell(g,x+s*2,y+9,14,19);
-      g.fillStyle='#fff';ell(g,x-9,y-12,13,14);ell(g,x+12,y+21,6,6);
-      g.strokeStyle='#2b1a10';g.lineWidth=6;g.beginPath();g.ellipse(x,y,38,50,0,0,Math.PI*2);g.stroke();
-      g.lineWidth=9;g.beginPath();g.ellipse(x,y,39,51,0,Math.PI*1.12,Math.PI*1.88);g.stroke();});}
-  else if(mode==='blink'){g.strokeStyle='#2b1a10';g.lineWidth=9;[-1,1].forEach(s=>{g.beginPath();g.ellipse(cx+s*58,ey+8,30,11,0,0,Math.PI);g.stroke();});}
-  else{g.strokeStyle='#2b1a10';g.lineWidth=10;[-1,1].forEach(s=>{g.beginPath();g.ellipse(cx+s*58,ey+16,28,24,0,Math.PI*1.1,Math.PI*1.9);g.stroke();});}
-  if(mode==='sad'){g.fillStyle='rgba(120,200,255,.85)';[-1,1].forEach(s=>{ell(g,cx+s*80,ey+58,7,16);ell(g,cx+s*82,ey+88,5,10);});
-    g.strokeStyle='#5a0f16';g.lineWidth=9;g.beginPath();g.arc(cx,318,26,1.15*Math.PI,1.85*Math.PI);g.stroke();}
-  else{const mouth=()=>{g.beginPath();g.moveTo(cx-64,262);g.quadraticCurveTo(cx,274,cx+64,262);g.quadraticCurveTo(cx+52,344,cx,348);g.quadraticCurveTo(cx-52,344,cx-64,262);g.closePath();};
-    g.fillStyle='#5a0f16';mouth();g.fill();
-    g.save();mouth();g.clip();g.fillStyle='#ffffff';g.fillRect(cx-70,258,140,20);g.fillStyle='#ef5a6f';ell(g,cx+6,334,34,18);g.restore();
-    g.strokeStyle='#2b1a10';g.lineWidth=6;mouth();g.stroke();}
+  g.fillStyle='#b9f5a4';g.fillRect(0,0,1024,512);
+  const grd=g.createLinearGradient(0,0,0,512);grd.addColorStop(0,'rgba(255,255,255,.35)');grd.addColorStop(.45,'rgba(255,255,255,0)');grd.addColorStop(1,'rgba(40,120,60,.18)');g.fillStyle=grd;g.fillRect(0,0,1024,512);
+  const cx=256,ey=214;
+  g.fillStyle='rgba(255,110,150,.5)';ell(g,cx-96,272,24,12);ell(g,cx+96,272,24,12);
+  g.lineCap='round';
+  if(mode==='open'||mode==='sad'){[-54,54].forEach(dx=>{const x=cx+dx,y=ey;
+      g.fillStyle='#1b1440';ell(g,x,y,31,43);
+      const ig=g.createLinearGradient(0,y-38,0,y+40);ig.addColorStop(0,'#241a5e');ig.addColorStop(.55,'#3d6fe0');ig.addColorStop(1,'#8ff0ff');g.fillStyle=ig;ell(g,x,y+4,25,36);
+      g.fillStyle='#130c30';ell(g,x,y+7,13,18);
+      g.fillStyle='#fff';ell(g,x-10,y-16,12,13);ell(g,x+11,y+19,6,6);
+      g.fillStyle='rgba(255,255,255,.85)';ell(g,x+12,y-6,3.5,3.5);
+      g.save();g.translate(x-10,y-16);g.fillStyle='#fff';g.beginPath();for(let k=0;k<8;k++){const r=k%2?4:17;const a=k*Math.PI/4;g.lineTo(Math.cos(a)*r,Math.sin(a)*r);}g.closePath();g.globalAlpha=.6;g.fill();g.restore();
+      g.strokeStyle='#1b1440';g.lineWidth=7;g.beginPath();g.ellipse(x,y,33,45,0,Math.PI*1.12,Math.PI*1.88);g.stroke();
+      g.lineWidth=5;g.beginPath();g.moveTo(x+(dx>0?28:-28),y-30);g.lineTo(x+(dx>0?42:-42),y-40);g.stroke();});}
+  else if(mode==='blink'){g.strokeStyle='#1b1440';g.lineWidth=8;[-54,54].forEach(dx=>{g.beginPath();g.ellipse(cx+dx,ey+6,26,10,0,0,Math.PI);g.stroke();});}
+  else {g.strokeStyle='#1b1440';g.lineWidth=9;[-54,54].forEach(dx=>{g.beginPath();g.ellipse(cx+dx,ey+14,24,22,0,Math.PI*1.1,Math.PI*1.9);g.stroke();});}
+  if(mode==='sad'){g.strokeStyle='#1b1440';g.lineWidth=7;[-54,54].forEach(dx=>{const s=dx<0?1:-1;g.beginPath();g.moveTo(cx+dx-s*30,ey-62);g.lineTo(cx+dx+s*14,ey-50);g.stroke();});
+    g.fillStyle='rgba(120,200,255,.85)';[-54,54].forEach(dx=>{ell(g,cx+dx+(dx<0?-20:20),ey+52,7,16);ell(g,cx+dx+(dx<0?-22:22),ey+82,5,10);});
+    g.strokeStyle='#5a1838';g.lineWidth=8;g.beginPath();g.arc(cx,300,22,1.15*Math.PI,1.85*Math.PI);g.stroke();}
+  else{g.fillStyle='#5a1838';g.beginPath();g.moveTo(cx-28,262);g.quadraticCurveTo(cx,262,cx+28,262);g.quadraticCurveTo(cx+24,300,cx,302);g.quadraticCurveTo(cx-24,300,cx-28,262);g.fill();
+  g.fillStyle='#ff7aa0';ell(g,cx,292,13,7);}
   const t=new T.CanvasTexture(cv);t.anisotropy=4;return t;}
 const FACE={open:bobFace('open'),blink:bobFace('blink'),happy:bobFace('happy'),sad:bobFace('sad')};
 function shoeTex(){const cv=document.createElement('canvas');cv.width=256;cv.height=128;const g=cv.getContext('2d');
@@ -481,26 +481,29 @@ const PUFF=puffTex();
 
 /* ================= Bob ================= */
 function makeShoe(side){const s=new T.Group();
-  const white=toon(0xfdfdfd),red=toon(0xe0262f),redD=toon(0xb81d26),navy=toon(0x2b5cff);
-  const sole=new T.Mesh(new T.SphereGeometry(1,20,12),white);sole.scale.set(.17,.07,.29);sole.position.set(0,-.16,.07);s.add(sole);
-  const st=new T.Mesh(new T.TorusGeometry(.2,.012,6,28),redD);st.rotation.x=Math.PI/2;st.scale.set(.85,1.45,1);st.position.set(0,-.12,.07);s.add(st);
-  const upper=new T.Mesh(new T.SphereGeometry(1,22,16),red);upper.scale.set(.16,.15,.26);upper.position.set(0,-.05,.04);s.add(upper);
-  const toe=new T.Mesh(new T.SphereGeometry(1,18,12,0,Math.PI*2,0,Math.PI/2),white);toe.scale.set(.15,.1,.11);toe.position.set(0,-.12,.22);toe.rotation.x=.25;s.add(toe);
-  const collar=new T.Mesh(new T.CylinderGeometry(.15,.165,.26,20),red);collar.position.set(0,.06,-.03);s.add(collar);
-  const rim=new T.Mesh(new T.TorusGeometry(.15,.025,8,20),white);rim.rotation.x=Math.PI/2;rim.position.set(0,.19,-.03);s.add(rim);
-  for(let k=0;k<4;k++){const l=new T.Mesh(new T.BoxGeometry(.17,.022,.028),white);l.position.set(0,.1-k*.045,.08+k*.045);l.rotation.x=-.55;s.add(l);}
-  const patch=new T.Mesh(new T.CircleGeometry(.07,18),white);patch.position.set(side*.166,.05,-.03);patch.rotation.y=side*Math.PI/2;s.add(patch);
-  const star=new T.Mesh(new T.CircleGeometry(.04,5),navy);star.position.set(side*.168,.05,-.03);star.rotation.y=side*Math.PI/2;s.add(star);
+  const white=toon(0xfdfdfd), rainbowMat=new T.MeshToonMaterial({map:SHOE}), stripe=toon(0xc77dff), navy=toon(0x1d3557);
+  const sole=new T.Mesh(new T.BoxGeometry(.3,.09,.52),white);sole.position.set(0,-.16,.07);s.add(sole);
+  const st=new T.Mesh(new T.BoxGeometry(.305,.022,.525),stripe);st.position.set(0,-.13,.07);s.add(st);
+  const upper=new T.Mesh(new T.SphereGeometry(1,20,14),rainbowMat);upper.scale.set(.15,.13,.25);upper.position.set(0,-.06,.05);s.add(upper);
+  const toe=new T.Mesh(new T.SphereGeometry(1,16,12),white);toe.scale.set(.14,.085,.1);toe.position.set(0,-.1,.24);s.add(toe);
+  const collar=new T.Mesh(new T.CylinderGeometry(.15,.16,.22,18),rainbowMat);collar.position.set(0,.03,-.03);s.add(collar);
+  for(let k=0;k<3;k++){const l=new T.Mesh(new T.BoxGeometry(.16,.025,.03),toon(COLORS[(k*2+side+1)%7].hex));l.position.set(0,.03-k*.04,.06+k*.06);l.rotation.x=-.5;s.add(l);}
+  const patch=new T.Mesh(new T.CircleGeometry(.065,16),white);patch.position.set(side*.161,.03,-.03);patch.rotation.y=side*Math.PI/2;s.add(patch);
+  const star=new T.Mesh(new T.CircleGeometry(.032,5),navy);star.position.set(side*.163,.03,-.03);star.rotation.y=side*Math.PI/2;s.add(star);
   s.traverse(o=>{if(o.isMesh)o.castShadow=true;});return s;}
 const BODY_Y=1.12;
 function makeBob(){const group=new T.Group(),rig=new T.Group();group.add(rig);
   const bodyMat=new T.MeshToonMaterial({map:FACE.open});
-  const body=new T.Mesh(new T.SphereGeometry(.75,48,32),bodyMat);body.position.y=BODY_Y;body.castShadow=true;rig.add(body);
+  const body=new T.Mesh(new T.SphereGeometry(.75,40,28),bodyMat);body.position.y=BODY_Y;body.castShadow=true;rig.add(body);
+  const pantsMat=toon(0x2f6fe0),pantsDark=toon(0x1f4fb0);
+  const pants=new T.Mesh(new T.SphereGeometry(.765,40,16,0,Math.PI*2,Math.PI*.6,Math.PI*.4),pantsMat);pants.position.y=BODY_Y;pants.castShadow=true;rig.add(pants);
+  const band=new T.Mesh(new T.TorusGeometry(.765*Math.sin(Math.PI*.6),.045,8,40),pantsDark);band.rotation.x=Math.PI/2;band.position.y=BODY_Y+.765*Math.cos(Math.PI*.6);rig.add(band);
+  const button=new T.Mesh(new T.SphereGeometry(.05,10,8),toon(0xffd23f));button.position.set(0,band.position.y,.73);rig.add(button);
   const legs=[];
-  [-1,1].forEach(side=>{const pivot=new T.Group();pivot.position.set(side*.27,.62,0);
-    const shoe=makeShoe(side);shoe.position.y=-.42;pivot.add(shoe);rig.add(pivot);legs.push(pivot);});
-  const handM=toon(0xf6f6fa);
-  const hands=[-1,1].map(side=>{const h=new T.Mesh(new T.SphereGeometry(.19,18,14),handM);h.position.set(side*.88,1.0,.1);h.castShadow=true;rig.add(h);return h;});
+  [-1,1].forEach(side=>{const pivot=new T.Group();pivot.position.set(side*.3,.7,0);
+    const leg=new T.Mesh(new T.CylinderGeometry(.15,.13,.5,12),pantsMat);leg.position.y=-.25;leg.castShadow=true;pivot.add(leg);
+    const shoe=makeShoe(side);shoe.position.y=-.5;pivot.add(shoe);rig.add(pivot);legs.push(pivot);});
+  const hands=[-1,1].map(side=>{const h=new T.Mesh(new T.SphereGeometry(.17,14,10),toon(0xa8eea0));h.position.set(side*.88,1.0,.1);h.castShadow=true;rig.add(h);return h;});
   return {group,rig,bodyMat,legs,hands,blinkT:2,happyT:0};}
 function updateBobFace(b,dt,excited){b.blinkT-=dt;if(b.happyT>0)b.happyT-=dt;if(b.sadT>0)b.sadT-=dt;const F=b.faceSet||FACE;
   let face=F.open;if(b.sadT>0)face=F.sad;else if(b.happyT>0||excited)face=F.happy;else if(b.blinkT<0){face=F.blink;if(b.blinkT<-.12)b.blinkT=rand(2,4.5);}
