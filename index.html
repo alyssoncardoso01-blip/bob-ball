@@ -211,6 +211,24 @@ html,body{-webkit-tap-highlight-color:transparent;}
 #hint{font-size:11px;padding:5px 12px;transition:opacity .6s;}
 #hint.fade{opacity:0;}
 @media (max-width:640px){.slot{width:13px;height:13px}#mid{gap:3px}#hearts svg{width:13px;height:13px}}
+/* Menu principal estilo jogo */
+#mainmenu .title{margin-bottom:2px;}
+#mainmenu .mmtag{margin-bottom:14px;}
+.mmpanel{display:flex;flex-direction:column;gap:10px;align-items:stretch;}
+.mmpanel>.btn{width:100%;font-size:21px;padding:10px 20px 8px;}
+.mmpanel>.btn.ghost{font-size:18px;}
+.mmpanel .kicker{margin:0;}
+.mmpanel .phasepick{margin:0;}
+.optlist{display:flex;flex-direction:column;gap:8px;}
+.opt-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font:800 16px var(--font-body);color:var(--ink);background:#fff;border:3px solid #ddd6ee;border-radius:16px;padding:9px 12px 9px 16px;cursor:pointer;box-shadow:0 4px 0 #ddd6ee;text-align:left;}
+.opt-row:hover{border-color:var(--candy);}
+.opt-row:active{transform:translateY(2px);}
+.opt-row b{font-family:var(--font-display);font-size:15px;color:#fff;background:var(--leaf);border-radius:999px;padding:3px 14px;min-width:78px;text-align:center;}
+.opt-row.off b{background:#a5a0b4;}
+.opt-row.danger b{background:#e63946;}
+.opt-row:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
+#optctrls{margin:0;}
+@media (max-height:480px){#mainmenu .mmtag{display:none;}.mmpanel{gap:7px;}.mmpanel>.btn{font-size:17px;padding:7px 16px 5px;}.mmpanel>.btn.ghost{font-size:15px;}.opt-row{padding:6px 10px 6px 12px;font-size:14px;}#mainmenu .title{font-size:34px;}}
 </style>
 
 </head>
@@ -250,16 +268,39 @@ html,body{-webkit-tap-highlight-color:transparent;}
 
 <div class="overlay" id="start">
   <div class="card" id="mainmenu" hidden>
-    <div class="kicker">Menu principal</div>
     <h1 class="title bigtitle">Bob Ball</h1>
-    <p class="story">Ajude o Bob a salvar o Reino das Cores dos ogros!</p>
-    <div class="menu-actions">
+    <p class="story mmtag">Ajude o Bob a salvar o Reino das Cores dos ogros!</p>
+    <div class="mmpanel" id="mmmain">
       <button class="btn" id="mmcontinue" type="button" hidden>Continuar</button>
-      <button class="btn alt" id="mmnew" type="button">Novo jogo</button>
+      <button class="btn alt" id="mmnew" type="button">Iniciar</button>
+      <button class="btn ghost" id="mmphases" type="button">Escolher fase</button>
+      <button class="btn ghost" id="mmopts" type="button">Opções</button>
+      <button class="btn ghost" id="mmexit" type="button">Sair</button>
+      <p class="savenote" id="savenote"></p>
     </div>
-    <div class="phasepick" id="phasepick"></div>
-    <div class="menu-actions"><button class="btn ghost" id="mmexit" type="button">Sair do jogo</button></div>
-    <p class="savenote" id="savenote"></p>
+    <div class="mmpanel" id="mmphase" hidden>
+      <div class="kicker">Escolher fase</div>
+      <div class="phasepick" id="phasepick"></div>
+      <button class="btn ghost mmback" type="button">Voltar</button>
+    </div>
+    <div class="mmpanel" id="mmoptions" hidden>
+      <div class="kicker">Opções</div>
+      <div class="optlist">
+        <button class="opt-row" id="optmusic" type="button"><span>Música</span><b></b></button>
+        <button class="opt-row" id="optsfx" type="button"><span>Efeitos sonoros</span><b></b></button>
+        <button class="opt-row" id="optvoice" type="button"><span>Voz do Bob</span><b></b></button>
+        <button class="opt-row" id="optctrl" type="button"><span>Controles</span><b>Ver</b></button>
+        <button class="opt-row danger" id="optreset" type="button"><span>Apagar progresso</span><b>Apagar</b></button>
+      </div>
+      <dl class="controls" id="optctrls" hidden></dl>
+      <button class="btn ghost mmback" type="button">Voltar</button>
+    </div>
+    <div class="mmpanel" id="mmconfirm" hidden>
+      <div class="kicker">Começar do zero?</div>
+      <p class="story">Você já tem um jogo salvo. Iniciar de novo apaga o progresso e volta para a Fase 1.</p>
+      <button class="btn" id="cfyes" type="button">Começar do zero</button>
+      <button class="btn ghost mmback" type="button">Voltar</button>
+    </div>
   </div>
   <div class="card" id="start1">
     <div class="kicker">Fase 1 · Jardim Arco-Íris</div>
@@ -626,9 +667,11 @@ function updateParticles(dt){for(let i=particles.length-1;i>=0;i--){const p=part
 /* ================= Áudio e vozes ================= */
 let actx=null,master=null,muted=false;
 function initAudio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)();master=actx.createGain();master.gain.value=.55;master.connect(actx.destination);startMusic();if(phase&&phase.onAudio)phase.onAudio();}catch(e){actx=null;}}
-function tone(f,d,type,vol,f2,when){if(!actx||muted)return;const t0=actx.currentTime+(when||0);const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);
+const SET_KEY='bobball-settings';let SET={music:true,sfx:true,voice:true};try{Object.assign(SET,JSON.parse(localStorage.getItem(SET_KEY)||'{}'));}catch(e){}
+function saveSet(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
+function tone(f,d,type,vol,f2,when){if(!actx||muted||!SET.sfx)return;const t0=actx.currentTime+(when||0);const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);
   g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.015);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.05);}
-function noise(d,vol){if(!actx||muted)return;const b=actx.createBuffer(1,Math.floor(actx.sampleRate*d),actx.sampleRate);const ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=(Math.random()*2-1)*(1-i/ch.length);
+function noise(d,vol){if(!actx||muted||!SET.sfx)return;const b=actx.createBuffer(1,Math.floor(actx.sampleRate*d),actx.sampleRate);const ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=(Math.random()*2-1)*(1-i/ch.length);
   const s=actx.createBufferSource();s.buffer=b;const f=actx.createBiquadFilter();f.type='lowpass';f.frequency.value=1800;const g=actx.createGain();g.gain.value=vol;s.connect(f);f.connect(g);g.connect(master);s.start();}
 const sfx={
   jump(){tone(330,.2,'square',.06,720);},
@@ -670,7 +713,7 @@ function pickVoices(){try{const vs=speechSynthesis.getVoices().filter(v=>/^pt/i.
 if('speechSynthesis' in window){pickVoices();try{speechSynthesis.onvoiceschanged=pickVoices;}catch(e){}}
 // Voz infantil sintetizada: vogais com formantes de criança, consoantes de verdade e entonação animada
 const FORM={a:[1150,1950,3700],e:[720,2800,3800],i:[480,3400,4300],o:[740,1350,3500],u:[500,1250,3400]};
-function childVoice(segs){if(!actx||muted||!segs)return;let t=actx.currentTime+.02;
+function childVoice(segs){if(!actx||muted||!SET.voice||!segs)return;let t=actx.currentTime+.02;
   const out=actx.createGain();out.gain.value=1.25;const comp=actx.createDynamicsCompressor();out.connect(comp);comp.connect(master);
   for(const s of segs){
     if(s.v){const d=s.d,f0=s.f||[380,420];
@@ -772,7 +815,7 @@ function playNote(e,time,stepDur,lead){const ctx=actx;
     const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=lead==='square'?3200:5000;o.connect(lp);lp.connect(g);o.start(time);vib.start(time);o.stop(time+dur+.08);vib.stop(time+dur+.08);});
   g.gain.setValueAtTime(.0001,time);g.gain.exponentialRampToValueAtTime(vol,time+.012);g.gain.setValueAtTime(vol*.8,time+Math.max(.02,dur-.05));g.gain.exponentialRampToValueAtTime(.0001,time+dur+.06);}
 function startMusic(){if(musicTimer)return;const song=SONGS[MAIN?'menu':PHASE]||SONGS[1];const built=buildSong(song);const stepDur=60/song.bpm/4;
-  musicBus=actx.createGain();musicBus.gain.value=.55;musicBus.connect(master);
+  musicBus=actx.createGain();musicBus.gain.value=SET.music?.55:0;musicBus.connect(master);
   echo=actx.createDelay(1);echo.delayTime.value=song.style==='cave'?.36:.24;const fb=actx.createGain();fb.gain.value=song.style==='cave'||song.style==='spooky'?.4:.25;const wet=actx.createGain();wet.gain.value=.3;
   echo.connect(fb);fb.connect(echo);echo.connect(wet);wet.connect(musicBus);
   let step=0,next=actx.currentTime+.15,idx=0;const ev=built.ev;
@@ -879,16 +922,35 @@ function persist(last,doneP){save=save||{last:1,done:[]};if(last)save.last=last;
   try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));return true;}catch(e){return false;}}
 function isUnlocked(n){return n===1||!!(save&&save.done&&save.done.indexOf(n-1)>=0);}
 const PHASE_NAMES=['Jardim Arco-Íris','Estrada Arco-Íris','Caverna dos Morcegos','Caverna Assombrada','Praia do Arco-Íris'];
+function applyMusic(){if(musicBus)musicBus.gain.value=SET.music?.55:0;}
 (function renderMainMenu(){const cont=document.getElementById('mmcontinue');
+  const panels=['mmmain','mmphase','mmoptions','mmconfirm'];
+  function show(id){panels.forEach(p=>document.getElementById(p).hidden=p!==id);const first=document.querySelector('#'+id+' button:not([hidden])');if(first)try{first.focus({preventScroll:true});}catch(e){}}
+  document.querySelectorAll('#mainmenu .mmback').forEach(b=>b.onclick=()=>show('mmmain'));
   if(save){let lp=save.last;while(lp>1&&!isUnlocked(lp))lp--;cont.hidden=false;cont.textContent='Continuar · Fase '+lp;cont.onclick=()=>goto('fase'+lp);}
+  document.getElementById('mmnew').onclick=()=>{if(save)show('mmconfirm');else goto('fase1');};
+  document.getElementById('cfyes').onclick=()=>{try{localStorage.removeItem(SAVE_KEY);}catch(e){}save=null;goto('fase1');};
+  document.getElementById('mmphases').onclick=()=>show('mmphase');
+  document.getElementById('mmopts').onclick=()=>{renderOpts();show('mmoptions');};
+  // fases
   const pick=document.getElementById('phasepick');pick.innerHTML='';
   const LOCK='<svg class="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" fill="#8a8f99"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#8a8f99" stroke-width="2.4" fill="none"/></svg>';
   [1,2,3,4,5].forEach(n=>{const b=document.createElement('button');b.type='button';b.className='tile';const done=save&&save.done.indexOf(n)>=0;const here=save&&save.last===n&&!done;const open=isUnlocked(n);
     if(!open){b.disabled=true;b.classList.add('lockd');b.innerHTML='<b>Fase '+n+'</b><span>'+PHASE_NAMES[n-1]+'</span><em>'+LOCK+' Bloqueada</em>';b.title='Vença a Fase '+(n-1)+' para liberar';pick.appendChild(b);return;}
     if(here)b.classList.add('saved');b.innerHTML='<b>Fase '+n+'</b><span>'+PHASE_NAMES[n-1]+'</span><em>'+(done?'Concluída ✓':here?'Salvo aqui':'')+'</em>';b.onclick=()=>goto('fase'+n);pick.appendChild(b);});
-  document.getElementById('savenote').textContent=(save?'Seu progresso está salvo. ':'O progresso é salvo automaticamente. ')+'Vença uma fase para liberar a próxima.';
-  let armed=false;const nb=document.getElementById('mmnew');
-  nb.onclick=()=>{if(save&&!armed){armed=true;nb.textContent='Apagar progresso e começar?';return;}try{localStorage.removeItem(SAVE_KEY);}catch(e){}save=null;goto('fase1');};})();
+  document.getElementById('savenote').textContent=save?'Seu progresso está salvo.':'O progresso é salvo automaticamente.';
+  // opções
+  const rows={music:document.getElementById('optmusic'),sfx:document.getElementById('optsfx'),voice:document.getElementById('optvoice')};
+  function renderOpts(){Object.keys(rows).forEach(k=>{const on=SET[k];rows[k].classList.toggle('off',!on);rows[k].querySelector('b').textContent=on?(k==='sfx'?'Ligados':'Ligada'):(k==='sfx'?'Desligados':'Desligada');rows[k].setAttribute('aria-pressed',on?'true':'false');});}
+  Object.keys(rows).forEach(k=>rows[k].onclick=()=>{SET[k]=!SET[k];saveSet();renderOpts();initAudio();applyMusic();if(k==='voice'&&SET.voice)childVoice(CHILD.eba);if(k==='sfx'&&SET.sfx)sfx.pick();});
+  const ctrls=document.getElementById('optctrls');
+  ctrls.innerHTML=isTouch?'<dt>Joystick</dt><dd>Andar e desviar</dd><dt>PULAR</dt><dd>Pular</dd><dt>Botão rosa</dt><dd>Ação da fase (bomba, côco, sacudir…)</dd><dt>Arrastar a tela</dt><dd>Girar a câmera</dd><dt>☰</dt><dd>Pausar, salvar ou sair</dd>'
+    :'<dt><kbd>W A S D</kbd> / setas</dt><dd>Andar e desviar</dd><dt><kbd>Espaço</kbd></dt><dd>Pular</dd><dt><kbd>F</kbd></dt><dd>Ação da fase (bomba, côco, sacudir…)</dd><dt>Mouse · <kbd>Q</kbd> <kbd>E</kbd></dt><dd>Girar a câmera</dd><dt><kbd>Esc</kbd> · <kbd>M</kbd></dt><dd>Pausar · som</dd>';
+  document.getElementById('optctrl').onclick=()=>{ctrls.hidden=!ctrls.hidden;document.querySelector('#optctrl b').textContent=ctrls.hidden?'Ver':'Ocultar';};
+  let armed=false;const rb=document.getElementById('optreset');
+  rb.onclick=()=>{if(!save){rb.querySelector('b').textContent='Nada salvo';return;}if(!armed){armed=true;rb.querySelector('span').textContent='Toque de novo para confirmar';return;}
+    try{localStorage.removeItem(SAVE_KEY);}catch(e){}save=null;goto('');};
+  renderOpts();})();
 
 /* ---------- Atalho de teste: tocar 5 vezes no título libera todas as fases ---------- */
 (function testUnlock(){const t=document.querySelector('#mainmenu .bigtitle');if(!t)return;let n=0,tm=0;
