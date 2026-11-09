@@ -669,7 +669,7 @@ function pickVoices(){try{const vs=speechSynthesis.getVoices().filter(v=>/^pt/i.
   ogreVoice=pool.find(v=>/Daniel|Ant[oô]nio|Felipe|Ricardo|Fabio|male|masculin/i.test(v.name)&&!/female/i.test(v.name))||bobVoice;}catch(e){}}
 if('speechSynthesis' in window){pickVoices();try{speechSynthesis.onvoiceschanged=pickVoices;}catch(e){}}
 // Voz infantil sintetizada: vogais com formantes de criança, consoantes de verdade e entonação animada
-const FORM={a:[1000,1650,3200],e:[620,2450,3300],i:[420,3050,3800],o:[640,1150,3000],u:[440,1050,2900]};
+const FORM={a:[1150,1950,3700],e:[720,2800,3800],i:[480,3400,4300],o:[740,1350,3500],u:[500,1250,3400]};
 function childVoice(segs){if(!actx||muted||!segs)return;let t=actx.currentTime+.02;
   const out=actx.createGain();out.gain.value=1.25;const comp=actx.createDynamicsCompressor();out.connect(comp);comp.connect(master);
   for(const s of segs){
@@ -677,7 +677,7 @@ function childVoice(segs){if(!actx||muted||!segs)return;let t=actx.currentTime+.
       const src=actx.createOscillator();src.type='sawtooth';src.frequency.setValueAtTime(f0[0],t);
       if(f0.length>2){src.frequency.linearRampToValueAtTime(f0[1],t+d*.45);src.frequency.linearRampToValueAtTime(f0[2],t+d);}else src.frequency.linearRampToValueAtTime(f0[1],t+d);
       const vib=actx.createOscillator(),vg=actx.createGain();vib.frequency.value=5.6;vg.gain.setValueAtTime(0,t);vg.gain.linearRampToValueAtTime(f0[0]*.03,t+d);vib.connect(vg);vg.connect(src.frequency);
-      const env=actx.createGain();env.gain.setValueAtTime(.0001,t);env.gain.exponentialRampToValueAtTime(.6,t+.035);env.gain.setValueAtTime(.6,t+Math.max(.04,d-.09));env.gain.exponentialRampToValueAtTime(.0001,t+d);
+      const env=actx.createGain();env.gain.setValueAtTime(.0001,t);const pk=.6*(s.g||1);env.gain.exponentialRampToValueAtTime(pk,t+.03);env.gain.setValueAtTime(pk,t+Math.max(.04,d-.09));env.gain.exponentialRampToValueAtTime(.0001,t+d);
       src.connect(env);const F=FORM[s.v],F2=s.to?FORM[s.to]:null;
       F.forEach((fr,k)=>{const bp=actx.createBiquadFilter();bp.type='bandpass';bp.Q.value=[6,9,11][k];bp.frequency.setValueAtTime(fr*1.12,t);if(F2)bp.frequency.linearRampToValueAtTime(F2[k]*1.12,t+d);
         const gk=actx.createGain();gk.gain.value=[1,.6,.22][k];env.connect(bp);bp.connect(gk);gk.connect(out);});
@@ -691,17 +691,17 @@ function childVoice(segs){if(!actx||muted||!segs)return;let t=actx.currentTime+.
       else{f.type='bandpass';f.frequency.value=2500;g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);}
       n.connect(f);f.connect(g);g.connect(out);n.start(t);n.stop(t+d+.02);t+=d*(c==='b'?.6:.9);}}}
 const CHILD={
-  eba:[{v:'e',d:.15,f:[400,430]},{c:'-',d:.035},{c:'b',d:.03},{v:'a',d:.52,f:[470,570,400]}],
-  uhu:[{v:'u',d:.15,f:[380,400]},{c:'h',d:.07},{v:'u',d:.55,f:[420,620,520]}],
-  oba:[{v:'o',d:.14,f:[400,420]},{c:'-',d:.03},{c:'b',d:.03},{v:'a',d:.44,f:[470,530,380]}],
-  ai:[{v:'a',d:.14,f:[520,560]},{v:'a',d:.28,f:[560,380],to:'i'}],
-  bibi:[{c:'b',d:.03},{v:'i',d:.11,f:[520,520]},{c:'-',d:.05},{c:'b',d:.03},{v:'i',d:.16,f:[540,520]}],
-  oh:[{v:'o',d:.44,f:[460,400,320]}],
-  hihi:[{c:'h',d:.05},{v:'i',d:.08,f:[560,540]},{c:'h',d:.05},{v:'i',d:.08,f:[540,520]},{c:'h',d:.05},{v:'i',d:.13,f:[520,480]}],
-  uii:[{v:'u',d:.12,f:[400,420],to:'i'},{v:'i',d:.62,f:[440,700,620]}],
-  six:[{c:'s',d:.12},{v:'i',d:.14,f:[480,440]},{c:'k',d:.03},{c:'s',d:.1}],
-  seven:[{c:'s',d:.11},{v:'e',d:.11,f:[460,450]},{c:'k',d:.025},{v:'e',d:.15,f:[420,380]},{v:'u',d:.08,f:[380,360]}],
-  buaa:[{c:'b',d:.03},{v:'u',d:.22,f:[420,400],to:'a'},{v:'a',d:.72,f:[440,460,300]}],
+  eba:[{v:'e',d:.14,f:[540,590]},{c:'-',d:.03},{c:'b',d:.03},{v:'a',d:.5,f:[630,800,560]}],
+  uhu:[{v:'u',d:.14,f:[500,540]},{c:'h',d:.06},{v:'u',d:.55,f:[570,840,700]}],
+  oba:[{v:'o',d:.13,f:[530,560]},{c:'-',d:.03},{c:'b',d:.03},{v:'a',d:.42,f:[630,720,520]}],
+  ai:[{v:'a',d:.13,f:[690,740]},{v:'a',d:.28,f:[740,520],to:'i'}],
+  bibi:[{c:'b',d:.03},{v:'i',d:.1,f:[720,720]},{c:'-',d:.05},{c:'b',d:.03},{v:'i',d:.15,f:[740,700]}],
+  oh:[{v:'o',d:.42,f:[620,540,440]}],
+  hihi:[{c:'h',d:.05},{v:'i',d:.08,f:[780,760]},{c:'h',d:.05},{v:'i',d:.08,f:[760,740]},{c:'h',d:.05},{v:'i',d:.12,f:[740,680]}],
+  uii:[{v:'u',d:.12,f:[540,580],to:'i'},{v:'i',d:.6,f:[600,940,840]}],
+  six:[{c:'s',d:.1},{v:'i',d:.16,f:[660,760]},{c:'k',d:.03},{c:'s',d:.09}],
+  seven:[{c:'s',d:.1},{v:'e',d:.12,f:[700,720]},{v:'u',d:.04,f:[620,620],g:.45},{v:'e',d:.16,f:[650,560]},{v:'u',d:.08,f:[560,530],g:.5}],
+  buaa:[{c:'b',d:.03},{v:'u',d:.22,f:[580,560],to:'a'},{v:'a',d:.7,f:[620,660,440]}],
 };
 const bubble=document.getElementById('bubble'),obubble=document.getElementById('obubble');
 let bubbleT=0,obubbleT=0;
@@ -711,9 +711,7 @@ function speak(text,voiceObj,pitch,rate){if(muted||!('speechSynthesis' in window
 function natural(t){return t.replace(/\bu+h+u+l?\b/gi,'Uhul').replace(/([a-zà-ú])\1{1,}/gi,'$1');}
 let bobRef=null;
 function say(text,spoken,kind){bubble.textContent=text;bubble.classList.add('show');bubbleT=1.4;if(bobRef)bobRef.happyT=1.2;
-  if(muted)return;
-  if(spoken&&bobVoice&&'speechSynthesis' in window){if(!speak(natural(spoken),bobVoice,1.55,1.05))childVoice(CHILD[kind]||CHILD.uhu);}
-  else childVoice(CHILD[kind]||CHILD.uhu);}
+  if(muted)return;childVoice(CHILD[kind]||CHILD.uhu);}
 function ogreSay(text,spoken,dur){obubble.textContent=text;obubble.classList.add('show');obubbleT=dur||2;
   if(spoken&&!muted)speak(natural(spoken),ogreVoice,.3,.9);}
 
